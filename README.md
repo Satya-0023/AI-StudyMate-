@@ -2,7 +2,7 @@
 
 > **AI-Powered Personalized Learning Companion**
 
-AI StudyMate is a full-stack mobile application that transforms any topic into an interactive learning experience. Originally built with FastAPI, it has been migrated to a robust **Node.js** architecture to provide scalable, real-time content generation.
+AI StudyMate is a full-stack mobile application that transforms any topic into an interactive learning experience. And the **Node.js** architecture to provide scalable, real-time content generation.
 
 ## 🚀 Features
 
