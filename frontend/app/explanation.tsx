@@ -10,15 +10,17 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import api from '../src/utils/api';
+import { apiRequest } from '../src/utils/api'; // Use new utility
 import { Topic } from '../src/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../src/context/AuthContext'; // Import usage for token
 
 export default function Explanation() {
   const { topicId } = useLocalSearchParams<{ topicId: string }>();
   const [topic, setTopic] = useState<Topic | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { token } = useAuth(); // Get token
 
   useEffect(() => {
     if (topicId) {
@@ -28,10 +30,10 @@ export default function Explanation() {
 
   const fetchTopic = async () => {
     try {
-      const response = await api.get(`/api/topics/${topicId}`);
+      const response = await apiRequest(`/api/topics/${topicId}`, 'GET', undefined, token || undefined);
       setTopic(response.data);
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.detail || 'Failed to load content');
+      Alert.alert('Error', error.detail || error.message || 'Failed to load content');
       router.back();
     } finally {
       setLoading(false);

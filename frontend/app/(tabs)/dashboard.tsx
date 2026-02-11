@@ -13,14 +13,16 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import api from '../../src/utils/api';
+import { apiRequest } from '../../src/utils/api'; // Use new utility
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../../src/context/AuthContext'; // Import usage for token
 
 export default function Dashboard() {
   const [topic, setTopic] = useState('');
   const [difficulty, setDifficulty] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { token } = useAuth(); // Get token
 
   const difficulties = [
     { value: 'beginner', label: 'Beginner', icon: 'school', color: '#10b981' },
@@ -36,25 +38,26 @@ export default function Dashboard() {
 
     setLoading(true);
     try {
-      const response = await api.post('/api/topics/generate', {
+      const response = await apiRequest('/api/topics/generate', 'POST', {
         topic: topic.trim(),
         difficulty,
-      });
+      }, token || undefined); // Pass token
 
       // Navigate to explanation screen with the generated content
       router.push({
         pathname: '/explanation',
         params: { topicId: response.data.id },
       });
-      
+
       setTopic(''); // Clear input after successful generation
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.detail || 'Failed to generate content');
+      Alert.alert('Error', error.detail || error.message || 'Failed to generate content');
     } finally {
       setLoading(false);
     }
   };
 
+  // ... (rest of the file remains the same UI code)
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <KeyboardAvoidingView
